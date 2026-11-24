@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tirage des duos couleurs</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--brown:#5a2a1c;--cream:#fff3e0;--orange:#ff8a3d;--pink:#ff4f8b;--yellow:#ffc93c}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Nunito",system-ui,sans-serif;color:var(--brown);min-height:100vh;display:flex;justify-content:center;padding:20px;
+  background:
+    radial-gradient(circle at 20% 15%,rgba(255,201,60,.9) 0 18%,transparent 19%),
+    radial-gradient(circle at 85% 30%,rgba(255,79,139,.85) 0 22%,transparent 23%),
+    radial-gradient(circle at 50% 95%,rgba(255,138,61,.9) 0 30%,transparent 31%),
+    repeating-radial-gradient(circle at 50% 50%,#ff8a3d 0 22px,#ff4f8b 22px 44px,#ffc93c 44px 66px)}
+.app{width:100%;max-width:460px}
+h1{font-family:"Righteous",cursive;font-weight:400;font-size:2.4rem;margin:10px 0 2px;text-align:center;color:var(--cream);
+  text-shadow:3px 3px 0 var(--brown),6px 6px 0 var(--pink)}
+.sub{text-align:center;font-weight:800;font-size:.95rem;margin-bottom:12px;color:var(--brown);
+  background:var(--yellow);display:inline-block;width:100%;padding:6px 10px;border:3px solid var(--brown);border-radius:999px}
+.huissier{position:relative;display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+.huissier svg{display:block}
+.bulle{position:relative;margin-top:6px;background:#fff;border:3px solid var(--brown);border-radius:16px;padding:8px 14px;font-weight:800;font-size:.95rem;
+  opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;min-height:2.2em;text-align:center}
+.bulle.show{opacity:1;transform:translateY(0)}
+.card{background:var(--cream);border:4px solid var(--brown);border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:6px 6px 0 var(--brown)}
+button{font-family:"Righteous",cursive;font-size:1.05rem;border:3px solid var(--brown);border-radius:999px;padding:12px 16px;background:var(--orange);color:var(--cream);cursor:pointer;width:100%;margin-top:12px;box-shadow:4px 4px 0 var(--brown);transition:transform .1s}
+button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--brown)}
+button.ghost{background:var(--yellow);color:var(--brown)}
+select{font:800 1rem "Nunito",sans-serif;width:100%;padding:12px;border-radius:14px;border:3px solid var(--brown);background:#fff;color:var(--brown)}
+label{display:block;font-family:"Righteous",cursive;font-size:1.15rem;margin-bottom:10px}
+.result{text-align:center;padding:18px 8px 4px}
+.chip{display:inline-block;width:110px;height:110px;border-radius:50%;border:5px solid var(--brown);box-shadow:0 0 0 6px var(--yellow),6px 6px 0 6px var(--brown);margin-bottom:16px}
+.big{font-family:"Righteous",cursive;font-size:2rem;margin-bottom:8px;color:var(--pink);text-shadow:2px 2px 0 var(--brown)}
+.rules{font-weight:800;line-height:1.5;margin-top:14px;background:#fff;border:3px dashed var(--brown);border-radius:16px;padding:10px}
+.ok{font-weight:800;color:var(--brown);text-align:center;margin-top:8px;min-height:1.2em}
+details summary{cursor:pointer;font-family:"Righteous",cursive;font-size:1.05rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Duos couleurs</h1>
+  <div class="sub">8 duos · 8 couleurs · 10 € de bouffe (sucré + salé)</div>
+
+  <div class="huissier">
+    <svg id="huissier" viewBox="0 0 140 180" width="140" height="180" role="img" aria-label="Huissier de justice qui surveille la page">
+      <path d="M22 180 L24 132 Q70 116 116 132 L118 180 Z" fill="#2b2b3a"/>
+      <path d="M58 122 L70 140 L82 122 Z" fill="#fff"/>
+      <path d="M68 136 L72 136 L74 152 L70 158 L66 152 Z" fill="#e53935"/>
+      <ellipse cx="70" cy="88" rx="36" ry="40" fill="#f2c6a0" stroke="#5a2a1c" stroke-width="3"/>
+      <g transform="translate(0,6)"><rect x="34" y="12" width="72" height="30" rx="12" fill="#2b2b3a"/><rect x="22" y="38" width="96" height="8" rx="4" fill="#2b2b3a"/></g>
+      <circle cx="56" cy="84" r="9" fill="#fff" stroke="#5a2a1c" stroke-width="2"/>
+      <circle cx="84" cy="84" r="9" fill="#fff" stroke="#5a2a1c" stroke-width="2"/>
+      <circle id="pl" cx="56" cy="84" r="4" fill="#111"/>
+      <circle id="pr" cx="84" cy="84" r="4" fill="#111"/>
+      <circle cx="56" cy="84" r="13" fill="none" stroke="#5a2a1c" stroke-width="2.5"/>
+      <circle cx="84" cy="84" r="13" fill="none" stroke="#5a2a1c" stroke-width="2.5"/>
+      <line x1="69" y1="84" x2="71" y2="84" stroke="#5a2a1c" stroke-width="2.5"/>
+      <path d="M50 104 Q60 98 70 103 Q80 98 90 104 Q80 110 70 107 Q60 110 50 104 Z" fill="#2b2b3a"/>
+      <path d="M62 114 Q70 118 78 114" stroke="#5a2a1c" stroke-width="2" fill="none"/>
+      <rect x="92" y="140" width="30" height="36" rx="3" fill="#fff" stroke="#5a2a1c" stroke-width="2" transform="rotate(-8 107 158)"/>
+      <circle cx="107" cy="160" r="6" fill="none" stroke="#e53935" stroke-width="2"/>
+      <circle cx="100" cy="150" r="6" fill="#f2c6a0"/>
+    </svg>
+    <div class="bulle" id="bulle" aria-live="polite"></div>
+  </div>
+
+  <div id="app"></div>
+</div>
+<script>
+const NAMES = ["Ben","Lucie","JB","Low'","Xav","Alice","Vivien","Laurencie","Poy","Flow'","Eugé","Flo M.","Manon","Luca"];
+// Tirage fixe : enregistre dans la page, donc visible par tout le groupe
+const FIXED = [
+  {color:{n:"Noir",c:"#111111"},a:"Flo M.",b:"Lucie"},
+  {color:{n:"Rose",c:"#ec407a"},a:"JB",b:"Poy"},
+  {color:{n:"Bleu",c:"#1e88e5"},a:"Xav",b:"Luca"},
+  {color:{n:"Blanc",c:"#ffffff"},a:"Alice",b:"Low'"},
+  {color:{n:"Jaune",c:"#fdd835"},a:"Eugé",b:"Manon"},
+  {color:{n:"Rouge",c:"#e53935"},a:"Laurencie",b:"Vivien"},
+  {color:{n:"Orange",c:"#fb8c00"},a:"Flow'",b:"Ben"}
+];
+let state = FIXED;
+
+function esc(s){ return s.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])); }
+
+/* Huissier : ses yeux suivent le dernier clic, et il commente */
+const figure = document.getElementById("huissier");
+const pl = document.getElementById("pl");
+const pr = document.getElementById("pr");
+const bulle = document.getElementById("bulle");
+const phrases = ["Je vous ai à l'œil…", "Tout est en règle ?", "Un duo, une couleur : c'est la loi !", "Constat : cette soirée est déjantée.", "Et le Rose, il est où ?"];
+let bulleTimer = null;
+
+function regarder(x, y){
+  const r = figure.getBoundingClientRect();
+  const cx = r.left + r.width * 0.5, cy = r.top + r.height * 0.45;
+  const dx = x - cx, dy = y - cy;
+  const d = Math.hypot(dx, dy) || 1;
+  const ox = dx / d * 3, oy = dy / d * 3;
+  pl.setAttribute("cx", 56 + ox); pl.setAttribute("cy", 84 + oy);
+  pr.setAttribute("cx", 84 + ox); pr.setAttribute("cy", 84 + oy);
+}
+
+document.addEventListener("click", e => {
+  regarder(e.clientX, e.clientY);
+  bulle.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+  bulle.classList.add("show");
+  clearTimeout(bulleTimer);
+  bulleTimer = setTimeout(() => bulle.classList.remove("show"), 1800);
+});
+
+function render(){
+  const app = document.getElementById("app");
+  const options = NAMES.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("");
+  app.innerHTML = `
+    <div class="card">
+      <label for="who">Qui es-tu ?</label>
+      <select id="who"><option value="">— Choisis ton prénom —</option>${options}</select>
+      <button id="reveal">Voir mon duo</button>
+      <div id="out"></div>
+    </div>
+    <div class="card">
+      <details>
+        <summary>Espace organisateur</summary>
+        <button class="ghost" id="copy">Copier le message pour le groupe WhatsApp</button>
+        <div class="ok" id="copied"></div>
+      </details>
+    </div>`;
+  document.getElementById("reveal").onclick = reveal;
+  document.getElementById("copy").onclick = copyMessage;
+}
+
+function reveal(){
+  const idx = document.getElementById("who").value;
+  const out = document.getElementById("out");
+  if(idx === ""){ out.innerHTML = ""; return; }
+  const name = NAMES[Number(idx)];
+  const pair = state.find(p => p.a === name || p.b === name);
+  if(!pair){ out.innerHTML = `<p class="rules">Ce prénom n'a pas de duo pour cette soirée.</p>`; return; }
+  const partner = pair.a === name ? pair.b : pair.a;
+  out.innerHTML = `
+    <div class="result">
+      <div class="chip" style="background:${pair.color.c}"></div>
+      <div class="big">${pair.color.n}</div>
+      <p style="margin:0">Ton duo : <b>${esc(name)}</b> &amp; <b>${esc(partner)}</b></p>
+      <p class="rules">Apporte 10 € de bouffe, sucré et salé, sur la couleur <b>${pair.color.n}</b>.<br>Habille-toi en <b>${pair.color.n.toLowerCase()}</b> !</p>
+    </div>`;
+}
+
+function copyMessage(){
+  const text = `🎉 Soirée duos couleurs !\nChaque duo a une couleur : apportez 10 € de bouffe (sucré + salé) sur votre couleur et habillez-vous dans cette couleur.\nDécouvrez votre duo et votre couleur ici : ${location.href}`;
+  const msg = document.getElementById("copied");
+  const done = () => msg.textContent = "Message copié ✔";
+  const fail = () => msg.textContent = "Copie impossible : sélectionne le texte manuellement.";
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(done, fail); }
+  else { fail(); }
+}
+
+render();
+</script>
+</body>
+</html>
